@@ -40,7 +40,6 @@
     "axios": "^1.13.2",
     "axobject-query": "^4.1.0",
     "balanced-match": "^1.0.2",
-    "baseline-browser-mapping": "^2.8.29",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
     "brace-expansion": "^1.1.12",
@@ -379,6 +378,7 @@
   "devDependencies": {
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
+    "baseline-browser-mapping": "^2.8.32",
     "jest": "^30.2.0"
   },
   "directories": {

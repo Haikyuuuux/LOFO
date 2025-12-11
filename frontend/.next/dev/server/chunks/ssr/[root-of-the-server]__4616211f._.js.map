@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 17, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/haiko/OneDrive/Desktop/lostandfound/lostandfound/frontend/app/profile/page.tsx"],"sourcesContent":["useEffect(() => {\r\n  const userId = localStorage.getItem(\"userId\"); // read from login\r\n\r\n  if (!userId) return;\r\n\r\n  fetch(\"http://localhost:3001/users/me\", {\r\n    headers: { \"x-user-id\": userId },\r\n  })\r\n    .then(async (res) => {\r\n      if (!res.ok) throw new Error(await res.text());\r\n      return res.json();\r\n    })\r\n    .then((data) => setUser(data))\r\n    .catch((err) => console.error(err));\r\n}, []);\r\n"],"names":[],"mappings":"AAAA,UAAU;IACR,MAAM,SAAS,aAAa,OAAO,CAAC,WAAW,kBAAkB;IAEjE,IAAI,CAAC,QAAQ;IAEb,MAAM,kCAAkC;QACtC,SAAS;YAAE,aAAa;QAAO;IACjC,GACG,IAAI,CAAC,OAAO;QACX,IAAI,CAAC,IAAI,EAAE,EAAE,MAAM,IAAI,MAAM,MAAM,IAAI,IAAI;QAC3C,OAAO,IAAI,IAAI;IACjB,GACC,IAAI,CAAC,CAAC,OAAS,QAAQ,OACvB,KAAK,CAAC,CAAC,MAAQ,QAAQ,KAAK,CAAC;AAClC,GAAG,EAAE"}}]
-}

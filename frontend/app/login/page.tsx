@@ -46,20 +46,30 @@ export default function AuthPage() {
             ? { email, password }
             : { username, email, password };
         
-        const maxRetries = 3;
+        const maxRetries = 2; // Reduced from 3 to 2 for faster failure
         let lastError = null;
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
+                // Add timeout to prevent hanging requests
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout
+
                 const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload),
+                    signal: controller.signal,
                 });
 
+                clearTimeout(timeoutId);
                 const data = await response.json();
 
                 if (!response.ok) {
+                    // Don't retry on authentication errors (400, 401)
+                    if (response.status === 400 || response.status === 401) {
+                        throw new Error(data.message || `API error (${response.status})`);
+                    }
                     throw new Error(data.message || `API error (${response.status})`);
                 }
 
@@ -85,14 +95,39 @@ export default function AuthPage() {
                 return;
 
             } catch (err: any) {
-                lastError = err.message || `A network or server error occurred on attempt ${attempt + 1}.`;
-                if (attempt < maxRetries - 1) {
-                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+                // Handle different error types
+                let errorMessage = "";
+                
+                if (err.name === 'AbortError' || err.message?.includes('aborted')) {
+                    errorMessage = "Request timed out. Please check if the server is running and try again.";
+                } else if (err.message) {
+                    errorMessage = err.message;
+                } else if (err instanceof TypeError && err.message?.includes('fetch')) {
+                    errorMessage = "Cannot connect to server. Make sure the backend is running on http://localhost:3001";
                 } else {
+                    errorMessage = `A network or server error occurred on attempt ${attempt + 1}.`;
+                }
+                
+                lastError = errorMessage;
+                
+                // Don't retry on authentication errors or if request was aborted
+                const isAuthError = err.message?.includes("User not found") || 
+                                   err.message?.includes("Wrong password") ||
+                                   err.message?.includes("User already exists") ||
+                                   err.message?.includes("All fields are required");
+                const isAborted = err.name === 'AbortError' || err.message?.includes('aborted');
+                const isNetworkError = err instanceof TypeError || err.message?.includes('fetch');
+                
+                // Don't retry on auth errors, aborted requests, or network errors (likely server down)
+                if (isAuthError || isAborted || isNetworkError || attempt >= maxRetries - 1) {
                     setMessage(`Action failed: ${lastError}`);
                     setMessageType('error');
                     setIsLoading(false);
+                    return;
                 }
+                
+                // Retry with shorter delay (only for temporary network errors)
+                await new Promise(resolve => setTimeout(resolve, 300));
             }
         }
     };

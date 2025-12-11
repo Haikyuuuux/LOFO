@@ -5,6 +5,7 @@ export const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  timeout: 15000, // Default 15 second timeout
 });
 
 // Optional: attach JWT token automatically
@@ -15,3 +16,14 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// Response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.code === 'ECONNABORTED') {
+      console.error('Request timeout:', error.config.url);
+    }
+    return Promise.reject(error);
+  }
+);

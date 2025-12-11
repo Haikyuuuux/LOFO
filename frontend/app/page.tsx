@@ -3,27 +3,25 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import ItemCard from "@/components/ItemCard";
-import Header from "@/components/Header"; // Import the new Header
+import Header from "@/components/Header";
 import { Item } from "@/types/Item";
-import Link from "next/link"; // Use Link for navigation
+import Link from "next/link"; 
 
-// Helper component for the image cluster (for better organization)
 function ImageCluster() {
   return (
     <div className="relative w-80 h-60 mt-10 ml-10">
-      {/* NOTE: You'll need to replace src with actual image paths */}
       <img
-        src="/images/laptop.jpg" // Placeholder path
+        src="/person.jpg"
         alt="Person typing"
         className="absolute w-48 h-36 object-cover rounded-md shadow-xl border-4 border-white transform -rotate-6 z-10 top-0 left-0"
       />
       <img
-        src="/images/sign.jpg" // Placeholder path
+        src="/key.jpg" 
         alt="Sign on tree"
         className="absolute w-48 h-36 object-cover rounded-md shadow-xl border-4 border-white transform rotate-3 z-20 top-12 left-20"
       />
       <img
-        src="/images/compass.jpg" // Placeholder path
+        src="/wallet.webp"
         alt="Compass"
         className="absolute w-48 h-36 object-cover rounded-md shadow-xl border-4 border-white transform rotate-12 z-30 top-20 left-40"
       />
